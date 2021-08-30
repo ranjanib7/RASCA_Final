@@ -12,9 +12,10 @@ all:  traces folders
 	${CC} ${CFLAGS} dram.c  mgries.c scoreboard.c mcore.c os.c  mcache.c sim.c memsys.c  hash_lib.c malloc_lib.c -o ${SIM}
 
 folders:
-	mkdir -p ../RESULTS ../TRACES
+	mkdir -p ../RESULTS
 
 traces:
-	echo "TODO: Download traces"
+	echo "Downloading traces..." ; wget "" ; mv traces.tar.gz ../. ;  cd ../ ; tar -zxvf traces.tar.gz;
+
 clean: 
 	$(RM) ${SIM} *.o
