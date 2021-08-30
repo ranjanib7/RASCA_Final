@@ -15,7 +15,7 @@ folders:
 	mkdir -p ../RESULTS
 
 traces:
-	echo "Downloading traces..." ; wget "" ; mv traces.tar.gz ../. ;  cd ../ ; tar -zxvf traces.tar.gz;
+	echo "Downloading traces..." ; wget -O traces.tar.gz "https://www.dropbox.com/s/au0zom0vu2rus4c/traces.tar.gz?dl=1" ; mv traces.tar.gz ../. ;  cd ../ ; tar -zxvf traces.tar.gz;
 
 clean: 
 	$(RM) ${SIM} *.o
