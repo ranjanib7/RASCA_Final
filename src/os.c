@@ -22,7 +22,7 @@ OS *os_new(uns num_pages, uns num_threads)
 
     os->pt     = (PageTable *) calloc (1, sizeof (PageTable));
     os->pt->entries     = (Hash_Table *) calloc (1, sizeof(Hash_Table));
-    init_hash_table(os->pt->entries, "PageTableEntries", 4315027, sizeof( PageTableEntry ));
+    init_hash_table(os->pt->entries, (char*) "PageTableEntries", 4315027, sizeof( PageTableEntry ));
     os->pt->max_entries = os->num_pages;
 
     os->ipt     = (InvPageTable *) calloc (1, sizeof (InvPageTable));

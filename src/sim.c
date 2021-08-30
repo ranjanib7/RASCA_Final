@@ -135,7 +135,7 @@ int main(int argc, char** argv)
     mcore_print_stats(mcore[ii]);
   }
 
-  mcache_print_stats(LLC, "L3CACHE");
+  mcache_print_stats(LLC, (char*) "L3CACHE");
   memsys_print_stats(memsys);
 
   os_print_stats(os);

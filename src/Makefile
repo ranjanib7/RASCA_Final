@@ -8,14 +8,14 @@ PFLAGS    := -pg
 
 
 
-all:  traces folders
+all:  folders traces
 	${CC} ${CFLAGS} dram.c  mgries.c scoreboard.c mcore.c os.c  mcache.c sim.c memsys.c  hash_lib.c malloc_lib.c -o ${SIM}
 
-folders:
+folders: 
 	mkdir -p ../RESULTS
 
-traces:
-	echo "Downloading traces..." ; wget -O traces.tar.gz "https://www.dropbox.com/s/au0zom0vu2rus4c/traces.tar.gz?dl=1" ; mv traces.tar.gz ../. ;  cd ../ ; tar -zxvf traces.tar.gz;
+traces: 
+	 if test -d ../TRACES; then echo "Traces exist" ; else echo "Downloading traces..." ; wget -O traces.tar.gz "https://www.dropbox.com/s/au0zom0vu2rus4c/traces.tar.gz?dl=1" ; mv traces.tar.gz ../. ;  cd ../ ; tar -zxvf traces.tar.gz ; fi 
 
 clean: 
 	$(RM) ${SIM} *.o
