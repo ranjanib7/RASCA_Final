@@ -93,23 +93,23 @@ uns64  memsys_dram_access(MemSys *m, Addr lineaddr, uns64 in_cycle, ACTinfo *act
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
-void  memsys_rh_mitigate(MemSys *m, Addr rowID, Addr bankID, Addr channelID, uns64 in_cycle){
+void  memsys_rh_mitigate(MemSys *m, Addr rowID, uns64 in_cycle){
 
   DRAM_ReqType type=DRAM_REQ_RD;
   double burst_size=1.0; // one cache line
   uns64 delay=0;
 
-  //TODO: -- neighbors --
-  Addr row_prev = 0;
-  Addr row_next = 0;
-  
-  //TODO: Get addr of neighbor rows.
-  Addr lineaddr1 = 0;
-  Addr lineaddr2 = 0;
+  //-- neighbors --
+  Addr row_prev_lineaddr, row_next_lineaddr ; 
+  dram_get_neighbor_lineaddr(m->mainmem, rowID, &row_prev_lineaddr, &row_next_lineaddr);
 
-  //Activate neighbors
-  delay += dram_service(m->mainmem, lineaddr1, type, burst_size, in_cycle, NULL);
-  delay += dram_service(m->mainmem, lineaddr2, type, burst_size, in_cycle, NULL);
+  //-- Activate neighbors --
+  if(row_prev_lineaddr != (Addr)-1){
+    delay += dram_service(m->mainmem, row_prev_lineaddr, type, burst_size, in_cycle, NULL);
+  }
+  if(row_next_lineaddr != (Addr)-1){
+    delay += dram_service(m->mainmem, row_next_lineaddr, type, burst_size, in_cycle, NULL);
+  }
 
   return ;
 }

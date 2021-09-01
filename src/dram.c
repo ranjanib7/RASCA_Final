@@ -131,8 +131,6 @@ uns64   dram_service(DRAM *d, Addr lineaddr, DRAM_ReqType type, double num_lineb
   //---- Update dram_act_info for dram access ----
   if(act_info){
     act_info->rowID = myrowbufid;
-    act_info->bankID = mybankid ;
-    act_info->channelID = mychannelid;
     act_info->isACT =  (rowbuf_outcome != DRAM_ROWBUF_HIT)? true : false;
   }
   return delay;
@@ -283,3 +281,44 @@ void    dram_parseaddr(DRAM *d, Addr lineaddr, uns64 *myrowbufid, uns64 *mybanki
 
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
+
+void dram_get_neighbor_lineaddr(DRAM *d, uns64 rowbufid, uns64* row_prev_lineaddr, uns64* row_next_lineaddr){
+  Addr  rowbufid_next, rowbufid_prev ;
+  if(!DRAM_STRIPE_ROWBUFS_TO_BANKS){ 
+    //consecutive rows in same bank
+    rowbufid_next = (rowbufid + 1);
+    rowbufid_prev = (rowbufid - 1);
+    //Ignore ends of a bank.
+    if( (rowbufid_next / d->rowbufs_in_bank) !=  (rowbufid / d->rowbufs_in_bank))
+      rowbufid_next = -1;
+    if( (rowbufid_prev / d->rowbufs_in_bank) !=  (rowbufid / d->rowbufs_in_bank))
+      rowbufid_prev = -1;
+  } else {
+    //consecutive rowbufs go to diff banks
+    Addr rowbufid_delta = 0;
+    rowbufid_delta = d->num_banks;
+    rowbufid_next = (rowbufid + rowbufid_delta);
+    rowbufid_prev = (rowbufid - rowbufid_delta);      
+    //Ignore ends of a bank.
+    if( (rowbufid_next % d->num_banks) !=  (rowbufid % d->num_banks))
+      rowbufid_next = -1;
+    if( (rowbufid_prev % d->num_banks) !=  (rowbufid % d->num_banks))
+      rowbufid_prev = -1;
+  }  
+
+  //Update lineaddrs
+  if(rowbufid_prev != (Addr)-1)
+    *row_prev_lineaddr = rowbufid_prev * d->lines_in_rowbuf;
+  else 
+    *row_prev_lineaddr = -1;
+
+  if(rowbufid_next != (Addr)-1)
+    *row_next_lineaddr = rowbufid_next * d->lines_in_rowbuf;
+  else 
+    *row_next_lineaddr = -1;
+}
+
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+
