@@ -9,7 +9,17 @@
 
 typedef struct DRAM   DRAM;
 typedef struct DRAM_Bank  DRAM_Bank;
+typedef struct ACTinfo ACTinfo;
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+struct ACTinfo {
+    Addr    rowID;
+    Addr    bankID;
+    Addr    channelID;
+    bool    isACT;
+};
 
 struct DRAM_Bank{
     uns   id;
@@ -75,7 +85,7 @@ struct DRAM {
 DRAM*   dram_new(uns64 memsize, uns64 num_channels, uns64 numbanks,  uns64 rowbuf_size, 
 		 uns64 t_ACT, uns64 t_CAS, uns64 T_CAS, uns64 t_RP, uns64 t_BURST);
 
-uns64   dram_service(DRAM *d, Addr lineaddr, DRAM_ReqType type, double num_lineburst, uns64 in_cycle);
+uns64   dram_service(DRAM *d, Addr lineaddr, DRAM_ReqType type, double num_lineburst, uns64 in_cycle, ACTinfo *act_info);
 void    dram_closepage(DRAM *d, Addr lineaddr, uns64 in_cycle);
 void    dram_print_stats(DRAM *d);
 double  dram_calc_avgwait(DRAM *d, DRAM_ReqType type);

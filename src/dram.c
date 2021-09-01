@@ -59,7 +59,7 @@ DRAM*   dram_new(uns64 memsize, uns64 num_channels, uns64 num_banks,  uns64 rowb
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 
-uns64   dram_service(DRAM *d, Addr lineaddr, DRAM_ReqType type, double num_lineburst, uns64 in_cycle){
+uns64   dram_service(DRAM *d, Addr lineaddr, DRAM_ReqType type, double num_lineburst, uns64 in_cycle, ACTinfo *act_info){
   Flag rowbuf_conflict=FALSE, rowbuf_empty=FALSE, rowbuf_hit=FALSE;
   uns64 delay=0, delay_rc=0, delay_re=0, delay_rh=0;
   uns64 mybankid, myrowbufid, mychannelid;
@@ -123,13 +123,18 @@ uns64   dram_service(DRAM *d, Addr lineaddr, DRAM_ReqType type, double num_lineb
       rowbuf_outcome=DRAM_ROWBUF_HIT;
     }
   }
-
   
   d->s_rowbuf_outcome[type][rowbuf_outcome]++;
   d->s_access_type[type]++;
   d->s_delaysum_type[type]+= delay;
 
-
+  //---- Update dram_act_info for dram access ----
+  if(act_info){
+    act_info->rowID = myrowbufid;
+    act_info->bankID = mybankid ;
+    act_info->channelID = mychannelid;
+    act_info->isACT =  (rowbuf_outcome != DRAM_ROWBUF_HIT)? true : false;
+  }
   return delay;
 }
 
@@ -147,7 +152,6 @@ void   dram_closepage(DRAM *d, Addr lineaddr, uns64 in_cycle){
   // enforcing row cycle window
   uns64 ras_wait = 0;
   uns64 ras_done = in_cycle - mybank->rowbufopen_cycle;
-
 
   if( ras_done < d->t_RAS){
     ras_wait = (d->t_RAS - ras_done);

@@ -37,7 +37,7 @@ uns64 memsys_access(MemSys *m, Addr lineaddr,  uns tid, uns64 in_cycle){
   uns64 total_delay=0;
   uns64 memdelay=0;
 
-  memdelay=memsys_dram_access(m, lineaddr, in_cycle);
+  memdelay=memsys_dram_access(m, lineaddr, in_cycle, &(m->dram_acc_info));
   total_delay=memdelay;
 
   // stat collection happens below this line
@@ -68,23 +68,50 @@ void memsys_print_stats(MemSys *m)
 
     printf("\n%s_TOT_ACCESS      \t : %llu",    header, m->s_totaccess);
     printf("\n%s_AVG_DELAY       \t : %llu",    header, avg_delay);
-
     printf("\n");
+    
+    if(m->mgries_t)
+      mgries_print_stats(m->mgries_t);
 }
 
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
+//---- for input ACTinfo* act_info: if the pointer is not NULL, then *act_info is updated, else not  ----
 
-uns64  memsys_dram_access(MemSys *m, Addr lineaddr, uns64 in_cycle){
+uns64  memsys_dram_access(MemSys *m, Addr lineaddr, uns64 in_cycle, ACTinfo *act_info){
   DRAM_ReqType type=DRAM_REQ_RD;
   double burst_size=1.0; // one cache line
   uns64 delay=0;
 
-  delay += dram_service(m->mainmem, lineaddr, type, burst_size, in_cycle);
+  delay += dram_service(m->mainmem, lineaddr, type, burst_size, in_cycle, act_info);
 
   return delay;
+}
+
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+void  memsys_rh_mitigate(MemSys *m, Addr rowID, Addr bankID, Addr channelID, uns64 in_cycle){
+
+  DRAM_ReqType type=DRAM_REQ_RD;
+  double burst_size=1.0; // one cache line
+  uns64 delay=0;
+
+  //TODO: -- neighbors --
+  Addr row_prev = 0;
+  Addr row_next = 0;
+  
+  //TODO: Get addr of neighbor rows.
+  Addr lineaddr1 = 0;
+  Addr lineaddr2 = 0;
+
+  //Activate neighbors
+  delay += dram_service(m->mainmem, lineaddr1, type, burst_size, in_cycle, NULL);
+  delay += dram_service(m->mainmem, lineaddr2, type, burst_size, in_cycle, NULL);
+
+  return ;
 }
 
 

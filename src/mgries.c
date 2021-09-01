@@ -7,11 +7,11 @@
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
-MGries *mgries_new(uns entries, uns threshold){
+MGries *mgries_new(uns num_entries, uns threshold){
   MGries *m = (MGries *) calloc (1, sizeof (MGries));
-  m->entries  = (MGries_Entry *) calloc (entries, sizeof(MGries_Entry));
+  m->entries  = (MGries_Entry *) calloc (num_entries, sizeof(MGries_Entry));
   m->threshold = threshold;
-  m->num_entries = entries;
+  m->num_entries = num_entries;
   return m;
 }
 
@@ -24,7 +24,7 @@ void    mgries_reset(MGries *m){
 
   //------ update global stats ------
   m->s_num_reset++;
-  m->s_spill_count += m->spill_count;
+  m->s_glob_spill_count += m->spill_count;
 
   //----- reset the structures ------
   m->spill_count       = 0;
@@ -38,17 +38,17 @@ void    mgries_reset(MGries *m){
 }
 
 ////////////////////////////////////////////////////////////////////
-// The addr field is the row address
-// returns TRUE if mitigation must be issued
+// The rowAddr field is the row to be updated in the tracker
+// returns TRUE if mitigation must be issued for the row
 ////////////////////////////////////////////////////////////////////
 
-Flag  mgries_access(MGries *m, Addr addr){
+Flag  mgries_access(MGries *m, Addr rowAddr){
   Flag retval = FALSE;
   m->s_num_access++;
 
-  //---- TODO: access the tracker and install entry if needed
+  //---- TODO: Access the tracker and install entry (update stats) if needed
 
-
+  //---- TODO: Decide if mitigation is to be issued (retval)
   
   if(retval==TRUE){
     m->s_mitigations++;
@@ -62,6 +62,14 @@ Flag  mgries_access(MGries *m, Addr addr){
 ////////////////////////////////////////////////////////////////////
 
 void    mgries_print_stats(MGries *m){
- 
+    char header[256];
+    sprintf(header, "MGRIES");
 
+    printf("\n%s_NUM_RESET      \t : %llu",    header, m->s_num_reset);
+    printf("\n%s_GLOB_SPILL_CT  \t : %llu",    header, m->s_glob_spill_count);
+    printf("\n%s_NUM_ACCESS     \t : %llu",    header, m->s_num_access);
+    printf("\n%s_NUM_INSTALL    \t : %llu",    header, m->s_num_install);
+    printf("\n%s_NUM_MITIGATE   \t : %llu",    header, m->s_mitigations);
+
+    printf("\n"); 
 }
