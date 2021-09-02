@@ -58,7 +58,7 @@ You will submit one tar with three folders inside the tar: src_lab1_a, src_lab1_
 - All submitted code will be checked for plagiarism against other submissions (and other sources from the internet) and all violations will receive 0 on the assignment.
 
 
-## DRAM RH SIM v1.0
+## DRAM-RH-SIM v1.0
 A fast DRAM simulator for evaluating Rowhammer defenses.
 
 ### Instructions to use the Simulator
