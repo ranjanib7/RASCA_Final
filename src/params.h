@@ -17,7 +17,7 @@ uns64       LINESIZE        = 64;
 uns64       OS_PAGESIZE     = 4096; 
 
 
-uns64       L3_SIZE_KB      = 4096; 
+uns64       L3_SIZE_KB      = 8192; 
 uns64       L3_ASSOC        = 16; 
 uns64       L3_LATENCY      = 24; // cycles
 uns64       L3_REPL         = 0; //0:LRU 1:RND 2:SRRIP
@@ -26,7 +26,7 @@ uns64       L3_PERFECT      = 0; //simulate 100% hit rate for L3
 
 uns64       MEM_SIZE_MB     = 16384; 
 uns64       MEM_CHANNELS    = 1;
-uns64       MEM_BANKS       = 16; // Total banks in memory, not per channel (16x2 ranks here)
+uns64       MEM_BANKS       = 16; // Total banks in memory, not  per channel (16x2 ranks here)
 uns64       MEM_PAGESIZE    = 8192;
 uns64       MEM_T_ACT       = 44;
 uns64       MEM_T_RAS       = 102; // RowCycle = RAS + RP
@@ -183,6 +183,13 @@ void read_params(int argc, char **argv){
 	    else if (!strcmp(argv[ii], "-drammop")) {
 		if (ii < argc - 1) {		  
 		    DRAM_MINIMALIST_SIZE = atoi(argv[ii+1]);
+		    ii += 1;
+		}
+	    }
+
+	    else if (!strcmp(argv[ii], "-rh_thresh")) {
+		if (ii < argc - 1) {		  
+		    RH_THRESHOLD_ACT = atoi(argv[ii+1]);
 		    ii += 1;
 		}
 	    }

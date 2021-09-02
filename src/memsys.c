@@ -88,7 +88,6 @@ void memsys_print_stats(MemSys *m)
     printf("\n%s_TOT_ACCESS      \t : %llu",    header, m->s_totaccess);
     printf("\n%s_AVG_DELAY       \t : %llu",    header, avg_delay);
     printf("\n%s_RH_TOT_MITIGATE \t : %llu",    header, m->s_tot_mitigate);
-
     printf("\n");
     
     if(m->mgries_t)
