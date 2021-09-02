@@ -7,11 +7,12 @@
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
-MGries *mgries_new(uns num_entries, uns threshold){
+MGries *mgries_new(uns num_entries, uns threshold, Addr bankID){
   MGries *m = (MGries *) calloc (1, sizeof (MGries));
   m->entries  = (MGries_Entry *) calloc (num_entries, sizeof(MGries_Entry));
   m->threshold = threshold;
   m->num_entries = num_entries;
+  m->bankID = bankID;
   return m;
 }
 
@@ -63,7 +64,7 @@ Flag  mgries_access(MGries *m, Addr rowAddr){
 
 void    mgries_print_stats(MGries *m){
     char header[256];
-    sprintf(header, "MGRIES");
+    sprintf(header, "MGRIES-%llu",m->bankID);
 
     printf("\n%s_NUM_RESET      \t : %llu",    header, m->s_num_reset);
     printf("\n%s_GLOB_SPILL_CT  \t : %llu",    header, m->s_glob_spill_count);

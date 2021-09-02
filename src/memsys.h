@@ -22,7 +22,7 @@ struct MemSys {
 
   //---- Rowhammer related -----
   ACTinfo  dram_acc_info;
-  MGries   *mgries_t;
+  MGries   **mgries_t;
   //----------------------------
 
   uns64     s_totaccess;

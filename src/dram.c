@@ -131,6 +131,7 @@ uns64   dram_service(DRAM *d, Addr lineaddr, DRAM_ReqType type, double num_lineb
   //---- Update dram_act_info for dram access ----
   if(act_info){
     act_info->rowID = myrowbufid;
+    act_info->bankID = mybankid;
     act_info->isACT =  (rowbuf_outcome != DRAM_ROWBUF_HIT)? true : false;
   }
   return delay;
@@ -316,6 +317,19 @@ void dram_get_neighbor_lineaddr(DRAM *d, uns64 rowbufid, uns64* row_prev_lineadd
     *row_next_lineaddr = rowbufid_next * d->lines_in_rowbuf;
   else 
     *row_next_lineaddr = -1;
+}
+
+
+
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+Addr dram_get_bankid(DRAM *d, uns64 rowbufid){
+  Addr bankid    = rowbufid / d->rowbufs_in_bank; //consecutive rowbufs are in same bank;
+  if(DRAM_STRIPE_ROWBUFS_TO_BANKS){
+    bankid = rowbufid % d->num_banks; //consecutive rowbufs go to diff bank
+  }
+  return bankid;
 }
 
 ////////////////////////////////////////////////////////////

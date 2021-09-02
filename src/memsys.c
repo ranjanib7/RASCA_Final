@@ -24,8 +24,16 @@ MemSys *memsys_new(uns num_threads){
     sprintf(m->mainmem->name, "MEM");
     m->lines_in_mainmem_rbuf = MEM_PAGESIZE/LINESIZE; // static
 
-
     
+    //-- TODO: Create and Initialize Misra Gries Tracker
+    //-- Think? How many trackers do you need? HINT: Look at mgries_new(..) func or memsys_print_stats func.
+    /* int num_mg_trackers = X; */
+
+    /* m->mgries_t = (MGries**) calloc(num_mg_trackers,sizeof(MGries*)); */
+    /* for(int i=0; i<num_mg_trackers; i++){ */
+    /*   m->mgries_t[i] = mgries_new(...);   */
+    /* } */
+
     return m;
 }
 
@@ -71,7 +79,9 @@ void memsys_print_stats(MemSys *m)
     printf("\n");
     
     if(m->mgries_t)
-      mgries_print_stats(m->mgries_t);
+      for(uns i=0; i< m->mainmem->num_banks; i++){
+	mgries_print_stats(m->mgries_t[i]);	      
+      }
 }
 
 

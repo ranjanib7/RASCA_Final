@@ -21,6 +21,7 @@ struct MGries{
   MGries_Entry *entries;
   uns           num_entries;
   uns           threshold;
+  Addr          bankID;
   uns           spill_count;
 
   uns64         s_num_reset;        //-- how many times was the tracker reset

@@ -16,6 +16,7 @@ typedef struct ACTinfo ACTinfo;
 
 struct ACTinfo {
     Addr    rowID;
+    Addr    bankID;
     bool    isACT;
 };
 
@@ -90,6 +91,7 @@ double  dram_calc_avgwait(DRAM *d, DRAM_ReqType type);
 
 void    dram_parseaddr(DRAM *d, Addr lineaddr, uns64 *myrowbufid, uns64 *mybankid, uns64 *mychannelid);
 void    dram_get_neighbor_lineaddr(DRAM *d, uns64 rowbufid, uns64* row_prev_lineaddr, uns64* row_next_lineaddr);
+Addr    dram_get_bankid(DRAM *d, uns64 rowbufid);
 
 
 ////////////////////////////////////////////////////////////////////
