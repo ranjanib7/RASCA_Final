@@ -9,7 +9,7 @@
 
 InDramCtr *indramctr_new(uns num_ctrs, uns saturation_val, uns threshold){
   InDramCtr *m = (InDramCtr *) calloc (1, sizeof (InDramCtr));
-  m->counts  = (Indramctr_Entry *) calloc (num_ctrs, sizeof(uns64));
+  m->counts  = (uns64 *) calloc (num_ctrs, sizeof(uns64));
   m->num_ctrs = num_ctrs;
   m->saturation_val = saturation_val; //**Q**
   m->threshold = threshold;
@@ -30,7 +30,7 @@ void    indramctr_reset(InDramCtr *m){
   m->s_num_reset++;
 
   //----- reset the structures ------  
-  for(ii=0; ii < m->num_entries; ii++){
+  for(ii=0; ii < m->num_ctrs; ii++){
     m->counts[ii] = 0;
 
     //-- TODO: Call indramctr_write()?? **Q**
@@ -75,7 +75,7 @@ void  indramctr_write(InDramCtr *m, Addr rowAddr, uns64 in_cycle, uns64 counter_
 // print stats for your tracker here
 ////////////////////////////////////////////////////////////////////
 
-void    indramctr_print_stats(Indramctr *m){
+void    indramctr_print_stats(InDramCtr *m){
     char header[256];
     sprintf(header, "INDRAMCTR");
 

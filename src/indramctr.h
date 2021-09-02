@@ -3,7 +3,7 @@
 
 #include "global_types.h"
 
-typedef struct Indramctr InDramCtr;
+typedef struct InDramCtr InDramCtr;
 #define NUM_CTRS_PER_CL (16)  // **Q**
 
 ///////////////////////////////////////////////////////////////////
@@ -27,13 +27,13 @@ struct InDramCtr{
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
 
-Indramctr *indramctr_new(uns num_ctrs,  uns saturation_val, uns threshold);
-void    indramctr_reset(Indramctr *m);
+InDramCtr *indramctr_new(uns num_ctrs,  uns saturation_val, uns threshold);
+void    indramctr_reset(InDramCtr *m);
 
-uns64   indramctr_read(Indramctr *m, Addr rowAddr, uns64 in_cycle);
-void    indramctr_write(Indramctr *m, Addr rowAddr, uns64 in_cycle, uns64 counter_val);
+Flag   indramctr_read(InDramCtr *m, Addr rowAddr, uns64 in_cycle);
+void    indramctr_write(InDramCtr *m, Addr rowAddr, uns64 in_cycle, uns64 counter_val);
 
-void    indramctr_print_stats(Indramctr *m);
+void    indramctr_print_stats(InDramCtr *m);
 
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
