@@ -1,16 +1,3 @@
-## DRAM RH SIM v1.0
-A fast DRAM simulator for evaluating Rowhammer defenses.
-
-### Run Instructions
-- **Compiling**: To compile, use `cd src/; make all`. This will download the traces from Dropbox (almost 800MB), and compile the source code to create `sim` executable.
-- **Running**; To run the simulator with a workload's execution trace (e.g. `../TRACES/bwaves_06.mat.gz`) running on 4 Cores of a CPU, use `./sim ../TRACES/bwaves_06.mat.gz ../TRACES/bwaves_06.mat.gz ../TRACES/bwaves_06.mat.gz ../TRACES/bwaves_06.mat.gz > ../RESULTS/BASELINE.4C.8MB/bwaves_06.res``. 
-  - You can run the simulator with any of the traces in the `../TRACES/` folder with the same trace or different traces running on the 4 CPU cores. 
-  - `../scripts/runall.sh` provides the command for running one benchmark and also all benchmarks in parallel.
-- **Get Statistics**: To get statistics, you can check the output of the simulator. For the bwaves_06 run  above, you can see `../RESULTS/BASELINE.4C.8MB/bwaves_06.res` for statistics like `SYS_CYCLES : 2155238427`. 
-  - To report a statistic (SYS_CYCLES) for all benchmarks and several results folders, use `cd ../scripts;  perl getdata.pl -w lab1 -amean -s SYS_CYCLES  -d ../RESULTS/BASELINE.4C.8MB <ANOTHER RESULTS FOLDER>`. 
-  - `getdata.pl` has several other useful flags including `-gmean` for geometric mean, `-n` for normalizing results of one folder with another, `-mstat` to multiply all stats with a constant value and more.
-  
-
 ## Lab-1 Rowhammer Mitigations:
      
 In this lab assignment, you will implement rowhammer mitigations. First you will implement two previous rowhammer mitigations, Graphene (MICRO'20), that uses algorithmic tracking of aggressor rows with few counters stored in SRAM, and CRA (CAL'14) which uses exact tracking of aggressors with in-DRAM counters tracking all row activations. Further, you will design CRA++, an improvement on CRA to reduce its overheads. Overall, You will learn how to model and simulate these hardware defenses, understand the performance trade-offs of different design decisions, and potentially create a more efficient solution than previous work.
@@ -69,3 +56,18 @@ You will submit one tar with three folders inside the tar: src_lab1_a, src_lab1_
 - You are not allowed to discuss or share any code with your peers, or copy code from any source on the internet. All work you submit MUST be your own.
 - You are also not allowed to post the problems or your solutions on the online.
 - All submitted code will be checked for plagiarism against each other submissions (and other sources from the internet).
+
+
+## DRAM RH SIM v1.0
+A fast DRAM simulator for evaluating Rowhammer defenses.
+
+### Instructions to use the Simulator
+- **Compile**: To compile, use `cd src/; make all`. This will download the traces from Dropbox (almost 800MB), and compile the source code to create `sim` executable.
+- **Run**; To run the simulator with a workload's execution trace (e.g. `../TRACES/bwaves_06.mat.gz`) running on 4 Cores of a CPU, use `./sim ../TRACES/bwaves_06.mat.gz ../TRACES/bwaves_06.mat.gz ../TRACES/bwaves_06.mat.gz ../TRACES/bwaves_06.mat.gz > ../RESULTS/BASELINE.4C.8MB/bwaves_06.res``. 
+  - You can run the simulator with any of the traces in the `../TRACES/` folder with the same trace or different traces running on the 4 CPU cores. 
+  - `../scripts/runall.sh` provides the command for running one benchmark and also all benchmarks in parallel.
+- **Get Statistics**: To get statistics, you can check the output of the simulator. For the bwaves_06 run  above, you can see `../RESULTS/BASELINE.4C.8MB/bwaves_06.res` for statistics like `SYS_CYCLES : 2155238427`. 
+  - To report a statistic (SYS_CYCLES) for all benchmarks and several results folders, use `cd ../scripts;  perl getdata.pl -w lab1 -amean -s SYS_CYCLES  -d ../RESULTS/BASELINE.4C.8MB <ANOTHER RESULTS FOLDER>`. 
+  - `getdata.pl` has several other useful flags including `-gmean` for geometric mean, `-n` for normalizing results of one folder with another, `-mstat` to multiply all stats with a constant value and more.
+  
+
