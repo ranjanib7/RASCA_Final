@@ -8,7 +8,7 @@ The first task is to implement the Misra-Gries tracker from [Graphene](https://w
 
 You will have to complete the following specific tasks: 
 1. Instantiate Misra-Gries tracker in `memsys.c` (`mgries_t`) 
-- Think: How large should the tracker be? How many trackers do you need? What should be the threshold? 
+  - Think: How large should the tracker be? How many trackers do you need? What should be the threshold? 
 2. Implement the function to access and update the tracker; `mgries_access`.
 3. Reset the tracker every 64ms using `mgries_reset` (assume a 4Ghz Clock).
 4. Use the previous memory access information in `dram_acc_info` to appropriately invoke `mgries_access`.
@@ -24,14 +24,14 @@ The second task is to implement [CRA](http://memlab.ece.gatech.edu/papers/CAL_20
 The first sub-part has the following tasks:
 1. Instantiate the CRA counters in `memsys.c` (`cra_t`).
 2. Implement the functions to read and write to the in-DRAM counters in `cra_ctr.c`.
-- Think: How should the rows in memory map to the counters in DRAM?
+   - Think: How should the rows in memory map to the counters in DRAM?
 3. Use the previous memory access information in `dram_acc_info` to appropriately invoke `cra_ctr_read/write`.
 4. Invoke the mitigation `memsys_rh_mitigate` when needed.
 
 The second sub-part has the following tasks:
 1. Instantiate the ctr-cache in `cra` (`ctr_cache`).
 2. Use `ctrcache_access` in `indramctr_read/write` to check if a counter is present in the cache and `ctrcache_install` to install if not present. 
-- Think: How do you handle reads and writes to the cache? When will writes propagate to memory? 
+   - Think: How do you handle reads and writes to the cache? When will writes propagate to memory? 
 
 #### **Grading Criteria:**  
 We will use the value of the statistics CRA_NUM_READS, CRA_NUM_WRITES and MSYS_RH_TOT_MITIGATE` to award points. +3 points if the values match the correct answer (+-5% error is acceptable), otherwise 0.
