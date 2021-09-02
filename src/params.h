@@ -2,7 +2,7 @@
 #define __PARAMS_H__
 
 #include "global_types.h"
-
+#include <string.h>
 
 #define PRINT_DOTS   1
 #define DOT_INTERVAL 20000000
@@ -36,7 +36,10 @@ uns64       MEM_T_BURST     = 8; // proc cycles to burst out a line
 uns64       MEM_T_PHY       = 0; // memory phy cycles (48 for AMD, not modeled yet)
 uns64       MEM_CLOSEPAGE   = 0;
 
-uns64       MEM_RSRV_MB     = 1024; //--- last 1 GB is reserved (for in-DRAM counters)
+//-- Rowhammer Related --
+uns64       MEM_RSRV_MB      = 1024; //last 1 GB is reserved (for CRAM counters in DRAM)
+uns64       RH_THRESHOLD_ACT    = 1024; //number of activations beyond which rowhammer bitflips might be possible.
+//-----------------------
 
 uns64       DRAM_MINIMALIST_SIZE = 0; // not using minimalist mapping
 

@@ -34,8 +34,7 @@ void    mgries_reset(MGries *m){
     m->entries[ii].valid = FALSE;
     m->entries[ii].addr  = 0;
     m->entries[ii].count = 0;
-  }
-  
+  }  
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -59,7 +58,8 @@ Flag  mgries_access(MGries *m, Addr rowAddr){
 }
 
 ////////////////////////////////////////////////////////////////////
-// print stats for your tracker here
+// print stats for the tracker
+// DO NOT CHANGE THIS FUNCTION
 ////////////////////////////////////////////////////////////////////
 
 void    mgries_print_stats(MGries *m){

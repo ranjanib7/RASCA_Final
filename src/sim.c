@@ -1,6 +1,6 @@
  /*************************************************************************
  * File         : sim.c
- * Description  : FAST DRAM CACHE Simulator
+ * Description  : Fast DRAM Rowhammer Mitigation Simulator
  *************************************************************************/
 
 #include <stdio.h>
@@ -80,7 +80,6 @@ int main(int argc, char** argv)
   int   ii;
   Flag  all_cores_done=0;
   
-
   if (argc < 2) {
     die_usage();
   }
@@ -95,8 +94,7 @@ int main(int argc, char** argv)
 
   uns l3sets = (L3_SIZE_KB*1024)/(L3_ASSOC*LINESIZE);
 
-
-  memsys = memsys_new(NUM_THREADS);
+  memsys = memsys_new(NUM_THREADS, RH_THRESHOLD_ACT);
   LLC = mcache_new(l3sets, L3_ASSOC, L3_REPL);
 
   for(ii=0; ii<num_threads; ii++){
@@ -130,7 +128,11 @@ int main(int argc, char** argv)
   //--------------------------------------------------------------------
   
   printf("\n\n");
-  
+   
+  printf("------------------------------------\n");
+  printf("------  DRAM.RH.SIM.V1.0  ----------\n");
+  printf("------------------------------------\n");
+
   for(ii=0; ii<num_threads; ii++){
     mcore_print_stats(mcore[ii]);
   }

@@ -1,23 +1,23 @@
-#ifndef INDRAMCTR_H
-#define INDRAMCTR_H
+#ifndef CRA_CTR_H
+#define CRA_CTR_H
 
 #include "global_types.h"
+#include "ctrcache.h"
 
-typedef struct InDramCtr InDramCtr;
-#define NUM_CTRS_PER_CL (16)  // **Q**
+typedef struct CraCtr CraCtr;
+#define NUM_CTRS_PER_CL (32) 
 
 ///////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
 
-struct InDramCtr{
+struct CraCtr{
   uns64         *counts;
   uns           num_ctrs;
-  Addr          saturation_val; //--after which counter is saturated.
   uns           threshold; //-- after which mitigation is to be issued 
+  Ctrcache      *ctr_cache;//-- to cache in-DRAM CRA counters.
 
-  uns64         s_num_reset;        //-- how many times was the tracker reset
-  //---- Update below statistics in indramctr_reads() and indramctr_writes() ----
+  //---- Update below statistics in cra_ctr_read() and cra_ctr_write() ----
   uns64         s_num_reads;  //-- how many times was the tracker called
   uns64         s_num_writes; //-- how many times did the tracker install rowIDs 
   uns64         s_mitigations; //-- how many times did the tracker issue mitigation
@@ -27,15 +27,12 @@ struct InDramCtr{
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
 
-InDramCtr *indramctr_new(uns num_ctrs,  uns saturation_val, uns threshold);
-void    indramctr_reset(InDramCtr *m);
-
-Flag   indramctr_read(InDramCtr *m, Addr rowAddr, uns64 in_cycle);
-void    indramctr_write(InDramCtr *m, Addr rowAddr, uns64 in_cycle, uns64 counter_val);
-
-void    indramctr_print_stats(InDramCtr *m);
+CraCtr *cra_ctr_new(uns num_ctrs,  uns threshold);
+Flag    cra_ctr_read(CraCtr *m, Addr rowAddr, uns64 in_cycle, uns64* read_ctrval);
+void    cra_ctr_write(CraCtr *m, Addr rowAddr, uns64 in_cycle, uns64 write_ctrval);
+void    cra_ctr_print_stats(CraCtr *m);
 
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
 
-#endif // INDRAMCTR_H
+#endif // CRA_CTR_H
