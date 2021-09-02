@@ -1,1 +1,2 @@
-src/sim 
+src/sim*
+RESULTS/*
