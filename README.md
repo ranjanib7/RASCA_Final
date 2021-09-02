@@ -55,7 +55,7 @@ You will submit one tar with three folders inside the tar: src_lab1_a, src_lab1_
 - You are allowed to discuss the problem and potential solution directions with your peers.
 - You are not allowed to discuss or share any code with your peers, or copy code from any source on the internet. All work you submit MUST be your own.
 - You are also not allowed to post the problems or your solutions on the online.
-- All submitted code will be checked for plagiarism against each other submissions (and other sources from the internet).
+- All submitted code will be checked for plagiarism against other submissions (and other sources from the internet) and all violations will receive 0 on the assignment.
 
 
 ## DRAM RH SIM v1.0
