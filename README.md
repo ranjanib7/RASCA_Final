@@ -3,7 +3,7 @@
 In this lab assignment, you will implement rowhammer mitigations. First you will implement two previous rowhammer mitigations, Graphene (MICRO'20), that uses algorithmic tracking of aggressor rows with few counters stored in SRAM, and CRA (CAL'14) which uses exact tracking of aggressors with in-DRAM counters tracking all row activations. Further, you will design CRA++, an improvement on CRA to reduce its overheads. Overall, You will learn how to model and simulate these hardware defenses, understand the performance trade-offs of different design decisions, and potentially create a more efficient solution than previous work.
   
 
-### Task-A - Graphene [2 points]
+### Task-A - Graphene [3 points]
 The first task is to implement the Misra-Gries tracker from [Graphene](https://www.microarch.org/micro53/papers/738300a001.pdf). A basic framework of the Misra-Gries tracker is available in `mgries.h/c`. You need to implement functions to check the tracker on a memory access, reset the tracker at appropriate times, and perform the mitigative action (refresh neighboring rows), when the time is right. We have implemented a function `memsys_rh_mitigate` in `memsys.c` for you to use for invoking the mitigative action.
 
 You will have to complete the following specific tasks: 
