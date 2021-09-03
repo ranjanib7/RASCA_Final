@@ -42,12 +42,12 @@ The third task is to implement CRA++, your technique to further reduce the overh
 
 To help you reduce these overheaads, you can think about the following two questions orthogonally:
 1. How can number of counter reads and writes be reduced, while keeping number of mitigations the same?
-2. How can we reduce the number of mitigations, while still maintaining the security guarantees?
+2. How can we reduce the number of mitigations, while still maintaining the security guarantees? 
 
-You are not allowed to change the number of sets and associativity for the counter-cache. But you are allowed to repurpose the counters or modify the operation of the counter cache in any other manner.
+You are not allowed to change the number of sets and associativity for the counter-cache. But you are allowed to repurpose the counters or modify the operation of the counter cache in any other manner. Do make sure that you still maintain the security guarantee of your mitigation (the guarantee that the  mitigation is at least invoked each time a row crosses the rowhammer-threshold number of activations in a refresh window), otherwise you lose all points for this task.
   
 #### **Grading Criteria:**  
-The points for this task will be awarded competitively, based on your results for the CRA_NUM_READS, CRA_NUM_WRITES and MSYS_RH_TOT_MITIGATE. You will automatically receive +3 points if the average improvement for the three statistics relative to the Task-B (Task-C/Task-B averaged over all three statistics across all benchmarks), is at least 5%. The top 5 results in the class above the 5% threshold will receive a bonus of up to 5 points (first +5, second +4, third +3, fourth +4, fifth +1).
+The points for this task will be awarded competitively, based on your results for the CRA_NUM_READS, CRA_NUM_WRITES and MSYS_RH_TOT_MITIGATE. You will automatically receive +3 points if the average improvement for the three statistics relative to the Task-B (Task-C/Task-B averaged over all three statistics across all benchmarks), is at least 5%. The top 5 results in the class above the 5% threshold will receive a bonus of up to 5 points (first +5, second +4, third +3, fourth +4, fifth +1). 
 
 ### Files for Submission.
 You will submit one tar with three folders inside the tar: src_lab1_a, src_lab1_b, src_lab1_c, each containing the entire source code (`src` folder) for the particular task. Please make sure that your code compiles and runs on either the Ubuntu or Red-Hat machines provided by [ECE](https://help.ece.gatech.edu/labs/names)  or [CoC](https://support.cc.gatech.edu/facilities/general-access-servers). We will compile, run and evaluate your code on similar machines.
