@@ -3,7 +3,7 @@
 In this lab assignment, you will implement rowhammer mitigations. First you will implement two previous rowhammer mitigations, Graphene (MICRO'20), that uses algorithmic tracking of aggressor rows with few counters stored in SRAM, and CRA (CAL'14) which uses exact tracking of aggressors with in-DRAM counters tracking all row activations. Further, you will design CRA++, an improvement on CRA to reduce its overheads. Overall, You will learn how to model and simulate these hardware defenses, understand the performance trade-offs of different design decisions, and potentially create a more efficient solution than previous work.
   
 
-### Task-A - Graphene [2 points]
+### Task-A - Graphene [4 points]
 The first task is to implement the Misra-Gries tracker from [Graphene](https://www.microarch.org/micro53/papers/738300a001.pdf). A basic framework of the Misra-Gries tracker is available in `mgries.h/c`. You need to implement functions to check the tracker on a memory access, reset the tracker at appropriate times, and perform the mitigative action (refresh neighboring rows), when the time is right. We have implemented a function `memsys_rh_mitigate` in `memsys.c` for you to use for invoking the mitigative action.
 
 You will have to complete the following specific tasks: 
@@ -15,14 +15,14 @@ You will have to complete the following specific tasks:
 5. Invoke the mitigation `memsys_rh_mitigate` when needed.
 
 #### **Grading Criteria:**  
-We will use the value of the statistics MGRIES-*_NUM_INSTALL and MSYS_RH_TOT_MITIGATE to award points. +2 points if the values match the correct answer (+-5% error is acceptable), otherwise 0.
+We will use the value of the statistics MGRIES-*_NUM_INSTALL and MSYS_RH_TOT_MITIGATE to award points. +4 points if the values match the correct answer (+-5% error is acceptable), otherwise 0.
   
 
 ### Task-B - CRA [4 points]
 The second task is to implement [CRA](http://memlab.ece.gatech.edu/papers/CAL_2014_1.pdf). A basic framework for the in-DRAM counters is available in `cra_ctr.h/c`. For this task, we will assume that out of the 16GB memory, the first 15GB stores the data and the last 1GB only stores the counters. For the simulation, you will store the counter values in a `CraCtr` structure within `memsys.c` and appropriately insert accesses to the DRAM to simulate the extra memory activity for accessing the in-DRAM counters. The first part of the task involves implementing the counters functionally, and the second part involves adding a counter-cache (structure `Ctrcache` provided in `ctrcache.c/h`) to reduce the number of DRAM accesses for accessing the counters.
 
 The first sub-part has the following tasks:
-1. Instantiate the CRA counters in `memsys.c` (`cra_t`).
+1. Instantiate the CRA counters in `memsys.c` (`cra_t`). Note these counters will provide you with the correct value but you still need to access DRAM to do timing simulation. 
 2. Implement the functions to read and write to the in-DRAM counters in `cra_ctr.c`.
    - Think: How should the rows in memory map to the counters in DRAM?
 3. Use the previous memory access information in `dram_acc_info` to appropriately invoke `cra_ctr_read/write`.
@@ -34,23 +34,23 @@ The second sub-part has the following tasks:
    - Think: How do you handle reads and writes to the cache? When will writes propagate to memory? 
 
 #### **Grading Criteria:**  
-We will use the value of the statistics CRA_NUM_READS, CRA_NUM_WRITES and MSYS_RH_TOT_MITIGATE to award points. +3 points if the values match the correct answer (+-5% error is acceptable), otherwise 0.
+We will use the value of the statistics CRA_NUM_READS, CRA_NUM_WRITES and MSYS_RH_TOT_MITIGATE to award points. +4 points if the values match the correct answer (+-5% error is acceptable), otherwise 0.
   
 
-### Task-C - CRA++ [3 points + bonus]
-The third task is to implement CRA++, your technique to further reduce the overheads of CRA. You will focus on two sources of overheads: (a) number of reads and writes to the counters in DRAM, (b) number of times the mitigation is invoked. For instance, this task is intentionally open-ended to encourage you to use your creativity aad come up with a new solution!  
+### Task-C - CRA++ [2 points + bonus]
+The third task is to implement CRA++, your technique to further reduce the overheads of CRA. You will focus on two sources of overheads: (a) number of reads and writes to the counters in DRAM, (b) number of times the mitigation is invoked. This task is intentionally open-ended to encourage you to use your creativity and come up with a new solution!  
 
 To help you reduce these overheaads, you can think about the following two questions orthogonally:
-1. How can number of counter reads and writes be reduced, while keeping number of mitigations the same?
+1. How can number of counter reads and writes be reduced, while keeping number of mitigations (approximately) the same?
 2. How can we reduce the number of mitigations, while still maintaining the security guarantees? 
 
 You are not allowed to change the number of sets and associativity for the counter-cache. But you are allowed to repurpose the counters or modify the operation of the counter cache in any other manner. Do make sure that you still maintain the security guarantee of your mitigation (the guarantee that the  mitigation is at least invoked each time a row crosses the rowhammer-threshold number of activations in a refresh window), otherwise you lose all points for this task.
   
 #### **Grading Criteria:**  
-The points for this task will be awarded competitively, based on your results for the CRA_NUM_READS, CRA_NUM_WRITES and MSYS_RH_TOT_MITIGATE. You will automatically receive +3 points if the average improvement for the three statistics relative to the Task-B (Task-C/Task-B averaged over all three statistics across all benchmarks), is at least 5%. The top 5 results in the class above the 5% threshold will receive a bonus of up to 5 points (first +5, second +4, third +3, fourth +4, fifth +1). 
+The points for this task will be awarded competitively, based on your results for the CRA_NUM_READS, CRA_NUM_WRITES and MSYS_RH_TOT_MITIGATE. You will automatically receive +3 points if the average improvement for the three statistics relative to the Task-B (Task-C/Task-B averaged over all three statistics across all benchmarks), is at least 5%. The top 3 results in the class above the 5% threshold will receive a bonus of up to 3 points (first +3, second +2, third +1). 
 
 ### Files for Submission.
-You will submit one tar with three folders inside the tar: src_lab1_a, src_lab1_b, src_lab1_c, each containing the entire source code (`src` folder) for the particular task. Please make sure that your code compiles and runs on either the Ubuntu or Red-Hat machines provided by [ECE](https://help.ece.gatech.edu/labs/names)  or [CoC](https://support.cc.gatech.edu/facilities/general-access-servers). We will compile, run and evaluate your code on similar machines.
+You will submit one tar with three folders inside the tar: `src_lab1_a`, `src_lab1_b`, `src_lab1_c`, each containing the entire source code (`src` folder) for the particular task. Please make sure that your code compiles and runs on either the Ubuntu or Red-Hat machines provided by [ECE](https://help.ece.gatech.edu/labs/names)  or [CoC](https://support.cc.gatech.edu/facilities/general-access-servers). We will compile, run and evaluate your code on similar machines.  You should also submit a 2 page report (submitted as PDF) capturing the high-level details of your implementation and tables capturing the key results for parts (A)(B)(C) averaged across all the workloads. 
   
 
 ### Collaboration / Plagiarism Policy
