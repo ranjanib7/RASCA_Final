@@ -27,7 +27,7 @@ CraCtr *cra_ctr_new(uns num_ctrs, uns threshold){
 // returns TRUE if mitigation must be issued for the row
 ////////////////////////////////////////////////////////////////////
 
-Flag  cra_ctr_read(CraCtr *m, Addr rowAddr, uns64 in_cycle, uns64* read_ctrval){
+Flag  cra_ctr_read(CraCtr *m, DRAM* d, Addr rowAddr, uns64 in_cycle, uns64* read_ctrval){
   Flag retval = FALSE;
   m->s_num_reads++;
 
@@ -35,7 +35,7 @@ Flag  cra_ctr_read(CraCtr *m, Addr rowAddr, uns64 in_cycle, uns64* read_ctrval){
   
   //---- TODO: B2 Check if present in counter cache using cache_access() to avoid mem-access
   
-  //---- TODO: B1 Issue memory access using memsys_dram_accesss()
+  //---- TODO: B1 Issue memory access using dram_service()
   
   //---- TODO: B1 Read counter and decide if mitigation is to be issued (retval)
 
@@ -48,14 +48,14 @@ Flag  cra_ctr_read(CraCtr *m, Addr rowAddr, uns64 in_cycle, uns64* read_ctrval){
   return retval;
 }
 
-void  cra_ctr_write(CraCtr *m, Addr rowAddr, uns64 in_cycle, uns64 write_ctrval){
+void  cra_ctr_write(CraCtr *m, DRAM* d, Addr rowAddr, uns64 in_cycle, uns64 write_ctrval){
   m->s_num_writes++;
 
   //---- TODO: B1 Calculate which cra_ctr is to be accessed
 
   //---- TODO: B2 Check if present in counter cache using cache_access() to avoid mem-access, and mark dirty.
   
-  //---- TODO: B1 Issue memory access using memsys_dram_accesss()
+  //---- TODO: B1 Issue memory access using dram_service()
   
   //---- TODO: B1 Update counter value.
 

@@ -37,7 +37,7 @@ struct MGries{
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
 
-MGries *mgries_new(uns entries, uns threshold);
+MGries *mgries_new(uns entries, uns threshold, Addr bankID);
 Flag    mgries_access(MGries *m, Addr addr);
 void    mgries_reset(MGries *m);
 

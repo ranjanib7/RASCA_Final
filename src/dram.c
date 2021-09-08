@@ -10,10 +10,6 @@
 #define DRAM_STRIPE_BANKS_TO_CHANNELS 1
 #define DRAM_STRIPE_ROWBUFS_TO_BANKS   1
 
-
-#define DRAM_REFRESH_WINDOW (205*1000*1000)
-
-
 uns   DRAM_ID=0;
 
 extern uns64 cycle;
@@ -301,9 +297,9 @@ void dram_get_neighbor_lineaddr(DRAM *d, uns64 rowbufid, uns64* row_prev_lineadd
     rowbufid_next = (rowbufid + rowbufid_delta);
     rowbufid_prev = (rowbufid - rowbufid_delta);      
     //Ignore ends of a bank.
-    if( (rowbufid_next % d->num_banks) !=  (rowbufid % d->num_banks))
+    if( (rowbufid_next / d->rowbufs_in_bank) != (rowbufid / d->rowbufs_in_bank) )
       rowbufid_next = -1;
-    if( (rowbufid_prev % d->num_banks) !=  (rowbufid % d->num_banks))
+    if( (rowbufid_prev / d->rowbufs_in_bank) != (rowbufid / d->rowbufs_in_bank) )
       rowbufid_prev = -1;
   }  
 

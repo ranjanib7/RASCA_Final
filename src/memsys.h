@@ -43,7 +43,7 @@ void    memsys_print_stats(MemSys *m);
 uns64   memsys_dram_access(MemSys *m, Addr lineaddr, uns64 in_cycle, ACTinfo *act_info);
 
 //---- Rowhammer related -----
-void    memsys_rh_mitigate(MemSys *m, Addr rowID);
+void    memsys_rh_mitigate(MemSys *m, Addr rowID, uns64 in_cycle);
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////

@@ -130,7 +130,7 @@ int main(int argc, char** argv)
   printf("\n\n");
    
   printf("------------------------------------\n");
-  printf("------  DRAM.RH.SIM.V1.0  ----------\n");
+  printf("------  DRAM.RH.SIM.V1.1  ----------\n");
   printf("------------------------------------\n");
 
   for(ii=0; ii<num_threads; ii++){

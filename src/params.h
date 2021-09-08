@@ -27,14 +27,14 @@ uns64       L3_PERFECT      = 0; //simulate 100% hit rate for L3
 uns64       MEM_SIZE_MB     = 16384; 
 uns64       MEM_CHANNELS    = 1;
 uns64       MEM_BANKS       = 16; // Total banks in memory, not  per channel (16x2 ranks here)
-uns64       MEM_PAGESIZE    = 8192;
-uns64       MEM_T_ACT       = 44;
-uns64       MEM_T_RAS       = 102; // RowCycle = RAS + RP
-uns64       MEM_T_CAS       = 44;
-uns64       MEM_T_RP        = 44;
-uns64       MEM_T_BURST     = 8; // proc cycles to burst out a line
-uns64       MEM_T_PHY       = 0; // memory phy cycles (48 for AMD, not modeled yet)
-uns64       MEM_CLOSEPAGE   = 0;
+uns64       MEM_PAGESIZE    = 8192; //Size of a DRAM Row
+uns64       MEM_T_ACT       = 44;  // Time to activate a row (Row to Column Delay or tRCD in DDR4)
+uns64       MEM_T_CAS       = 44;  // Column Access Strobe Time (CAS Latency or tCL in DDR4)
+uns64       MEM_T_RP        = 44;  // Row Precharge Tiem (tRP in DDR4)
+uns64       MEM_T_RAS       = 102; // Minimum delay bet. Activate and Precharge commands (atleast tRCD + tRP in DDR4)
+uns64       MEM_T_RC        = MEM_T_RAS + MEM_T_RP; // RowCycle time or ACT-to-ACT delay (min time bet ACT to different rows in a bank).  
+uns64       MEM_T_BURST     = 8;   // proc cycles to burst out a line
+uns64       MEM_CLOSEPAGE   = 0; 
 
 //-- Rowhammer Related --
 uns64       MEM_RSRV_MB      = 1024; //last 1 GB is reserved (for CRAM counters in DRAM)
@@ -113,14 +113,6 @@ void read_params(int argc, char **argv){
 	  if (!strcmp(argv[ii], "-h") || !strcmp(argv[ii], "-help")) {
 		die_usage();
 	    }	    
-
-	    else if (!strcmp(argv[ii], "-memphy")) {
-		if (ii < argc - 1) {		  
-		    MEM_T_PHY = atoi(argv[ii+1]);
-		    ii += 1;
-		}
-	    }
-
 	    else if (!strcmp(argv[ii], "-l3perfect")) {
 	      L3_PERFECT=1; 
 	    }

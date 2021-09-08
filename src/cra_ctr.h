@@ -3,6 +3,7 @@
 
 #include "global_types.h"
 #include "ctrcache.h"
+#include "dram.h"
 
 typedef struct CraCtr CraCtr;
 #define NUM_CTRS_PER_CL (32) 
@@ -28,8 +29,8 @@ struct CraCtr{
 ///////////////////////////////////////////////////////////////////
 
 CraCtr *cra_ctr_new(uns num_ctrs,  uns threshold);
-Flag    cra_ctr_read(CraCtr *m, Addr rowAddr, uns64 in_cycle, uns64* read_ctrval);
-void    cra_ctr_write(CraCtr *m, Addr rowAddr, uns64 in_cycle, uns64 write_ctrval);
+Flag    cra_ctr_read(CraCtr *m, DRAM* d, Addr rowAddr, uns64 in_cycle, uns64* read_ctrval);
+void    cra_ctr_write(CraCtr *m, DRAM* d, Addr rowAddr, uns64 in_cycle, uns64 write_ctrval);
 void    cra_ctr_print_stats(CraCtr *m);
 
 ///////////////////////////////////////////////////////////////////
