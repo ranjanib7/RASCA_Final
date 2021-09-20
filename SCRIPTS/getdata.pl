@@ -187,7 +187,7 @@ my (@w) = split(/\s+/, $SUITES{$wsuite});
 $num_w = scalar @w;
 @bmks = split/-/,$w[0];
 $num_p = scalar @bmks;
-$num_p = 8;
+$num_p = 20;
 
 $num_w = $wlimit if($wlimit && $wlimit < $num_w);
 
