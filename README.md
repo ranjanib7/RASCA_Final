@@ -1,6 +1,6 @@
 ## Lab-1 Rowhammer Mitigations
      
-In this lab assignment, you will implement rowhammer mitigations. First you will implement two previous rowhammer mitigations, Graphene (MICRO'20), that uses algorithmic tracking of aggressor rows with few counters stored in SRAM, and CRA (CAL'14) which uses exact tracking of aggressors with in-DRAM counters tracking all row activations. Further, you will design CRA++, an improvement on CRA to reduce its overheads. Overall, You will learn how to model and simulate these hardware defenses, understand the performance trade-offs of different design decisions, and potentially create a more efficient solution than previous work.
+In this lab assignment, you will implement rowhammer mitigations. First you will implement two previous rowhammer mitigations, Graphene (MICRO'20), that uses algorithmic tracking of aggressor rows with few counters stored in SRAM, and CRA (CAL'14) which uses exact tracking of aggressors with in-DRAM counters tracking all row activations. Further, you will design HYDRA (ISCA'22), an improvement on CRA to reduce its overheads. Overall, You will learn how to model and simulate these hardware defenses, understand the performance trade-offs of different design decisions, and potentially create a more efficient solution.
   
 
 ### Task-A - Graphene [4 points]
