@@ -35,6 +35,7 @@ uns64       MEM_T_RAS       = 102; // Minimum delay bet. Activate and Precharge 
 uns64       MEM_T_RC        = MEM_T_RAS + MEM_T_RP; // RowCycle time or ACT-to-ACT delay (min time bet ACT to different rows in a bank).  
 uns64       MEM_T_BURST     = 8;   // proc cycles to burst out a line
 uns64       MEM_CLOSEPAGE   = 0; 
+uns64       MEM_T_ROW_MOV   = 1.37;  // 1.37 us for moving one row to the quarantine area
 
 //-- Rowhammer Related --
 uns64       MEM_RSRV_MB      = 1024; //last 1 GB is reserved (for CRAM counters in DRAM)

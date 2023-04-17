@@ -7,6 +7,7 @@
 #include "dram.h"
 #include "mgries.h"
 #include "cra_ctr.h"
+#include "mitigation.h"
 
 #define MEMSYS_MAX_THREADS 16
 typedef struct MemSys MemSys;

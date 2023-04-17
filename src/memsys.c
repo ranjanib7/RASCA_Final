@@ -16,7 +16,7 @@
 MemSys *memsys_new(uns num_threads, uns64 rh_threshold){
     MemSys *m = (MemSys *) calloc (1, sizeof (MemSys));
     m->num_threads    = num_threads;
-    m->rh_threshold   = rh_threshold;
+    m->rh_threshold   = rh_threshold/2;
 
     // init main memory DRAM
     m->mainmem = dram_new(MEM_SIZE_MB*1024*1024, MEM_CHANNELS, MEM_BANKS, MEM_PAGESIZE, 
@@ -36,6 +36,15 @@ MemSys *memsys_new(uns num_threads, uns64 rh_threshold){
     //-- Think? What should be the threshold for mgries_new? 
     /*   m->mgries_t[i] = mgries_new(...);   */
     /* } */
+    int num_mg_trackers = MEM_BANKS;
+    m->mgries_t = (MGries**)calloc(num_mg_trackers, sizeof(MGries*));
+
+    uns w = (0.064 * 4 * 1000000000) / (MEM_T_RAS + MEM_T_RP);
+    uns num_entries = (w / m->rh_threshold);
+    for (int i = 0; i < num_mg_trackers; i++) {
+        //-- Think? What should be the threshold for mgries_new?
+        m->mgries_t[i] = mgries_new(num_entries, m->rh_threshold, i);
+    }
 
     //-- TASK B --
     //-- TODO: Initialize CRA Counters in DRAM
@@ -43,6 +52,17 @@ MemSys *memsys_new(uns num_threads, uns64 rh_threshold){
     //-- Think? How many counters needed? What should be the threshold for cra_ctr_new()?
     /* m->cra_t = (CraCtr*)  calloc(1,sizeof(CraCtr)); */
     /* m->cra_t = cra_ctr_new(...);    */
+
+    // Initialize the Row Quarantine Area
+
+    // Initialize RQA in DRAM
+    // for now keep it at the rowhammer threshold only
+    int row_quarantine_thresh = m->rh_threshold;
+    int trigger_row_mig = (MEM_T_RAS + MEM_T_RP) * row_quarantine_thresh;
+    int tmov = ((1.37 / 1000000000) * 4 * 1000000000);
+    int num_rows_rqa = ((0.064 * 4 * 1000000000) * m->mainmem->rowbufs_in_bank) / (trigger_row_mig + (m->mainmem->rowbufs_in_bank * tmov));
+    m->rqa_t = rqa_new(num_rows_rqa, m->rh_threshold);
+
     
     return m;
 }

@@ -47,6 +47,44 @@ Flag  mgries_access(MGries *m, Addr rowAddr){
   m->s_num_access++;
 
   //---- TODO: Access the tracker and install entry (update stats) if needed
+  for (uns64 i = 0; i < m->num_entries; i++) {
+      if (m->entries[i].valid) {
+          if (m->entries[i].addr == rowAddr) {
+              m->entries[i].count++;
+              add = TRUE;
+              break;
+          }
+          else if (m->entries[i].count == m->spill_count) {
+              m->entries[i].addr = rowAddr;
+              m->entries[i].count++;
+              m->s_num_install++;
+              count = TRUE;
+              break;
+          }
+      }
+  }
+
+  for (uns64 i = 0; i < m->num_entries; i++) {
+      if (!m->entries[i].valid && !count && !add) {
+          m->entries[i].addr = rowAddr;
+          m->entries[i].valid = TRUE;
+          m->entries[i].count++;
+          invalid = FALSE;
+          m->s_num_install++;
+          break;
+      }
+  }
+
+  if (!count && !add && invalid) {
+      m->spill_count++;
+  }
+
+  for (uns64 i = 0; i < m->num_entries; i++) {
+      if ((m->entries[i].count >= m->threshold) && ((m->entries[i].count % m->threshold) == 0)) {
+          retval = TRUE;
+          break;
+      }
+  }
 
   //---- TODO: Decide if mitigation is to be issued (retval)
   
