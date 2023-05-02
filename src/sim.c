@@ -100,14 +100,14 @@ int main(int argc, char** argv)
   for(ii=0; ii<num_threads; ii++){
     mcore[ii] = mcore_new( memsys, os, LLC, addr_trace_filename[ii], ii);
   }
-  
+
   srand(RAND_SEED);
   print_dots();
 
   //--------------------------------------------------------------------
   // -- Iterate through the traces by cycling all cores till done
   //--------------------------------------------------------------------
-  
+ 
   while( ! (all_cores_done) ){
     all_cores_done=1;
 

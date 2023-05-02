@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <iostream>
 
 #include "externs.h"
 #include "dram.h"

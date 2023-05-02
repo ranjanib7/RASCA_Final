@@ -3,12 +3,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <iostream>
 
 #include "externs.h"
 #include "memsys.h"
 #include "mcore.h"
 
-
+using namespace std;
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -53,17 +54,14 @@ MemSys *memsys_new(uns num_threads, uns64 rh_threshold){
     /* m->cra_t = (CraCtr*)  calloc(1,sizeof(CraCtr)); */
     /* m->cra_t = cra_ctr_new(...);    */
 
-    // Initialize the Row Quarantine Area
-
-    // Initialize RQA in DRAM
-    // for now keep it at the rowhammer threshold only
-    int row_quarantine_thresh = m->rh_threshold;
-    int trigger_row_mig = (MEM_T_RAS + MEM_T_RP) * row_quarantine_thresh;
-    int tmov = ((1.37 / 1000000000) * 4 * 1000000000);
-    int num_rows_rqa = ((0.064 * 4 * 1000000000) * m->mainmem->rowbufs_in_bank) / (trigger_row_mig + (m->mainmem->rowbufs_in_bank * tmov));
-    m->rqa_t = rqa_new(num_rows_rqa, m->rh_threshold);
-
-    
+    // AQUA
+    //int num_rows = 52182;  // assuming that A = rh/2 = 512 and time taken to move a quarantine row = 1 read + 1 write = 234 cycles
+    uns64 rqa_rows = 23053;
+    m->rqa = rqa_new(rqa_rows, rh_threshold/2);
+    uns64 fpt_rows = 2097152;
+    m->fpt = ptrtables_new(fpt_rows);
+    uns64 rpt_rows = 23053;
+    m->rpt = ptrtables_new(rpt_rows);
     return m;
 }
 
@@ -117,6 +115,9 @@ void memsys_print_stats(MemSys *m)
 
     if(m->cra_t)
       cra_ctr_print_stats(m->cra_t);
+
+    if(m->rqa)
+      rqa_print_stats(m->rqa);
 }
 
 
@@ -129,7 +130,28 @@ uns64  memsys_dram_access(MemSys *m, Addr lineaddr, uns64 in_cycle, ACTinfo *act
   double burst_size=1.0; // one cache line
   uns64 delay=0;
 
-  delay += dram_service(m->mainmem, lineaddr, type, burst_size, in_cycle, act_info);
+  if((in_cycle - m->rqa->last_reset)/4000000 >= 64) {
+    m->rqa->last_reset = in_cycle;
+    rqa_reset(m->rqa);
+  }
+
+  delay += rqa_check_delay();
+  Flag outcome = mgries_access(m->mgries_t[act_info->bankID], lineaddr/(m->mainmem->lines_in_rowbuf));
+  if(outcome == TRUE) {
+    delay += rqa_migrate(m->rqa, lineaddr/(m->mainmem->lines_in_rowbuf), m->fpt, m->rpt);
+  }
+  else {
+    delay += dram_service(m->mainmem, lineaddr/(m->mainmem->lines_in_rowbuf), type, burst_size, in_cycle, act_info);
+    rqa_drain_row(m->rqa, m->rpt, m->fpt);
+  }
+
+  /*if(act_info != NULL && act_info->isACT) {
+    Flag outcome = mgries_access(m->mgries_t[act_info->bankID], lineaddr/(m->mainmem->lines_in_rowbuf));
+    if(outcome == TRUE) {
+      memsys_rh_mitigate(m, lineaddr/(m->mainmem->lines_in_rowbuf), in_cycle);
+    }
+  }*/
+
 
   return delay;
 }

@@ -15,7 +15,8 @@ folders:
 	mkdir -p ../RESULTS
 
 traces: 
-	 if test -d ../TRACES; then echo "Traces exist" ; else echo "Downloading traces..." ; wget -O traces.tar.gz "https://drive.google.com/file/d/1IlCuhH4PhfeLEXaCsG5TsHZD4Txd_NzR/view?usp=sharing" ; mv traces.tar.gz ../. ;  cd ../ ; tar -zxvf traces.tar.gz ; rm -rf traces.tar.gz; fi 
+	if test -d ../TRACES; then echo "Traces exist" ; else echo "Downloading traces..." ; wget -O traces.tar.gz "https://www.dropbox.com/s/9khghoyl27jxj26/traces.tar.gz?dl=1" ; mv traces.tar.gz ../. ;  cd ../ ; tar -zxvf traces.tar.gz ; rm -rf traces.tar.gz; fi
+
 
 clean: 
 	$(RM) ${SIM} *.o

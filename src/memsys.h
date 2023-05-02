@@ -7,7 +7,8 @@
 #include "dram.h"
 #include "mgries.h"
 #include "cra_ctr.h"
-#include "mitigation.h"
+#include "rqa.h"
+#include "pointer_tables.h"
 
 #define MEMSYS_MAX_THREADS 16
 typedef struct MemSys MemSys;
@@ -28,6 +29,11 @@ struct MemSys {
   CraCtr    *cra_t;
   uns64     s_tot_mitigate;
   //----------------------------
+
+  // ----- AQUA -------
+  Rqa	    *rqa;
+  PtrTable  *fpt;
+  PtrTable  *rpt;
 
   uns64     s_totaccess;
   uns64     s_totdelaysum;

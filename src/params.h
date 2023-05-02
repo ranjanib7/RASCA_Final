@@ -34,14 +34,19 @@ uns64       MEM_T_RP        = 44;  // Row Precharge Tiem (tRP in DDR4)
 uns64       MEM_T_RAS       = 102; // Minimum delay bet. Activate and Precharge commands (atleast tRCD + tRP in DDR4)
 uns64       MEM_T_RC        = MEM_T_RAS + MEM_T_RP; // RowCycle time or ACT-to-ACT delay (min time bet ACT to different rows in a bank).  
 uns64       MEM_T_BURST     = 8;   // proc cycles to burst out a line
-uns64       MEM_CLOSEPAGE   = 0; 
-uns64       MEM_T_ROW_MOV   = 1.37;  // 1.37 us for moving one row to the quarantine area
+uns64       MEM_CLOSEPAGE   = 0;
 
 //-- Rowhammer Related --
 uns64       MEM_RSRV_MB      = 1024; //last 1 GB is reserved (for CRAM counters in DRAM)
 uns64       RH_THRESHOLD_ACT    = 1024; //number of activations beyond which rowhammer bitflips might be possible.
 //-----------------------
 
+//-- AQUA Related --
+uns64       cycles_for_read = MEM_T_ACT + MEM_T_CAS + (MEM_PAGESIZE / MEM_BANKS) * MEM_T_BURST;
+uns64       cycles_for_write= MEM_T_CAS + (MEM_PAGESIZE / MEM_BANKS) * MEM_T_BURST;
+uns64       MEM_T_ROW_MOV   = cycles_for_read + cycles_for_write;  // for moving one row to the quarantine area
+//----------------------
+//
 uns64       DRAM_MINIMALIST_SIZE = 0; // not using minimalist mapping
 
 uns64       OS_NUM_RND_TRIES=5; // page mapping (try X random invalids first)

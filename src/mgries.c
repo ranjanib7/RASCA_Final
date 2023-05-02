@@ -1,8 +1,11 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include "mgries.h"
+
+using namespace std;
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -43,51 +46,65 @@ void    mgries_reset(MGries *m){
 ////////////////////////////////////////////////////////////////////
 
 Flag  mgries_access(MGries *m, Addr rowAddr){
+
+  Flag hit = FALSE, miss_spill_match = FALSE;
   Flag retval = FALSE;
+
   m->s_num_access++;
 
   //---- TODO: Access the tracker and install entry (update stats) if needed
-  for (uns64 i = 0; i < m->num_entries; i++) {
-      if (m->entries[i].valid) {
-          if (m->entries[i].addr == rowAddr) {
-              m->entries[i].count++;
-              add = TRUE;
-              break;
-          }
-          else if (m->entries[i].count == m->spill_count) {
-              m->entries[i].addr = rowAddr;
-              m->entries[i].count++;
-              m->s_num_install++;
-              count = TRUE;
-              break;
-          }
-      }
+  // Is it already in the table?
+  for(uns i = 0; i < m->num_entries; i++) {
+    if((m->entries[i].addr == rowAddr) && m->entries[i].valid) {
+      m->entries[i].count++;
+      hit = TRUE;
+      break;
+    }
   }
 
-  for (uns64 i = 0; i < m->num_entries; i++) {
-      if (!m->entries[i].valid && !count && !add) {
-          m->entries[i].addr = rowAddr;
-          m->entries[i].valid = TRUE;
-          m->entries[i].count++;
-          invalid = FALSE;
-          m->s_num_install++;
-          break;
+  // any entry with the same value as the spillover count
+  if(!hit) {
+    // if it isn't in there, it may need to be installed
+    for(uns i = 0; i < m->num_entries; i++) {
+      if(m->entries[i].valid == 0) {
+        // install the new entry
+	m->entries[i].valid = TRUE;
+	m->entries[i].addr = rowAddr;
+	m->entries[i].count++;
+    	hit = TRUE;
+	m->s_num_install++;
+	break;
       }
-  }
-
-  if (!count && !add && invalid) {
-      m->spill_count++;
-  }
-
-  for (uns64 i = 0; i < m->num_entries; i++) {
-      if ((m->entries[i].count >= m->threshold) && ((m->entries[i].count % m->threshold) == 0)) {
-          retval = TRUE;
-          break;
+    }
+    if(!hit) {
+      // any entry with the same value as spillover count
+      for(uns j = 0; j < m->num_entries; j++) {
+        if((m->entries[j].count == m->spill_count) && m->entries[j].valid) {
+          // install a new item id in that entry
+	  m->entries[j].addr = rowAddr;
+	  m->entries[j].count++;
+	  miss_spill_match = TRUE;
+	  m->s_num_install++;
+	  break;
+        }
       }
+
+      // no entry has the same spillover count value so increment
+      if(miss_spill_match == FALSE) {
+        m->spill_count++;
+      }
+    }
   }
 
   //---- TODO: Decide if mitigation is to be issued (retval)
-  
+
+  for(uns k = 0; k < m->num_entries; k++) {
+    if((m->entries[k].count%m->threshold == 0) && (m->entries[k].count >= m->threshold) && (m->entries[k].valid) && (m->entries[k].addr == rowAddr)) {
+      retval = TRUE;
+      break;
+    }
+  }
+
   if(retval==TRUE){
     m->s_mitigations++;
   }

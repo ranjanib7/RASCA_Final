@@ -6,6 +6,7 @@
 #include <inttypes.h>
 #include <unistd.h>
 #include <zlib.h>
+#include <iostream>
 
 #include "externs.h"
 #include "mcore.h"
@@ -59,12 +60,21 @@ void mcore_init_trace(MCore *c){
 
 void mcore_cycle (MCore *c)
 {
+  // Reset the tracker every 64ms
+  //float time_in_ms = c->cycle/(4 * 1000000);
+  if(c->cycle%256000000 == 0) {
+    //std::cout<<"time "<<time_in_ms<<" cycles "<<c->cycle<<std::endl;
+    for(uns i = 0; i < MEM_BANKS; i++) {
+      mgries_reset(c->memsys->mgries_t[i]);
+    }
+  }
+
   if(MCORE_STOP_ON_EOF && c->done){
     return;
   }
 
   c->cycle += CLOCK_INC_FACTOR;
-  
+
   // if core is sleeping, return.
   if (c->cycle <= c->sleep_cycle_count){
     return;
@@ -73,16 +83,16 @@ void mcore_cycle (MCore *c)
   if( c->inst_num <= c->trace_inst_num){
     c->inst_num += (CORE_WIDTH*CLOCK_INC_FACTOR); // for faster sims
   }
-  
+
   if(c->inst_num >= c->trace_inst_num){
 
     if(c->trace_wb==FALSE){
       Flag l3outcome;
       Addr orig_lineaddr = os_v2p_lineaddr(c->os, c->trace_va, c->tid);
-      
+
       uns64 delay=0;
-      
-      
+
+
       c->access_count++;
       l3outcome = mcache_access(c->l3cache, orig_lineaddr);
       delay+=L3_LATENCY; // incurred on both hit and miss
@@ -91,17 +101,16 @@ void mcore_cycle (MCore *c)
 	uns64 memsysdelay;
 	memsysdelay = memsys_access(c->memsys, orig_lineaddr, c->tid, c->cycle+delay);
 	delay+=memsysdelay;
-	mcache_install(c->l3cache,orig_lineaddr); 
+	mcache_install(c->l3cache,orig_lineaddr);
 	c->miss_count++;
       }
-      
+
       c->delay_count +=  delay;
       c->sleep_cycle_count =  c->cycle + delay;
     }
 
     mcore_read_trace(c);
   }
-
 }
 
 
