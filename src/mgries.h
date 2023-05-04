@@ -13,7 +13,8 @@ typedef struct MGries MGries;
 struct MGries_Entry {
     Flag    valid;
     Addr    addr;
-    uns     count;
+    uns     count; // total count inclusive of rowhammer assuming that rowhammer is there and the dilution is 232
+    uns     secondary; // secondary activations due to half double
 };
 
 
@@ -31,6 +32,9 @@ struct MGries{
   uns64         s_num_access;  //-- how many times was the tracker called
   uns64         s_num_install; //-- how many times did the tracker install rowIDs 
   uns64         s_mitigations; //-- how many times did the tracker issue mitigation
+
+  // --- AQUA Related ----
+  Flag		start_aqua;
 
 };
 

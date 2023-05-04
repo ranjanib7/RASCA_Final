@@ -35,6 +35,7 @@ void rqa_reset(Rqa *rqa);
 uns64 rqa_check_delay();
 void rqa_remove_row(Addr rqa_addr, PtrTable *rpt, PtrTable *fpt);
 void rqa_drain_row(Rqa *rqa, PtrTable *rpt, PtrTable *fpt);
+uns64 rqa_access(Rqa *rqa, uns64 in_cycle);
 uns64 rqa_migrate(Rqa *rqa, Addr addr, PtrTable *fpt, PtrTable *rpt);
 void rqa_print_stats(Rqa *rqa);
 

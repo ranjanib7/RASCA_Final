@@ -16,6 +16,7 @@ MGries *mgries_new(uns num_entries, uns threshold, Addr bankID){
   m->threshold = threshold;
   m->num_entries = num_entries;
   m->bankID = bankID;
+  m->start_aqua = FALSE;
   return m;
 }
 
@@ -57,7 +58,11 @@ Flag  mgries_access(MGries *m, Addr rowAddr){
   for(uns i = 0; i < m->num_entries; i++) {
     if((m->entries[i].addr == rowAddr) && m->entries[i].valid) {
       m->entries[i].count++;
+      m->entries[i].secondary = (m->entries[i].count/232)*2;
       hit = TRUE;
+      // Set is_near_aggressor flag if this row was accessed as a near aggressor
+      m->entries[i].secondary = (m->entries[i].count/58);
+      m->entries[i].count += 2*(m->entries[i].secondary);
       break;
     }
   }
@@ -73,6 +78,8 @@ Flag  mgries_access(MGries *m, Addr rowAddr){
 	m->entries[i].count++;
     	hit = TRUE;
 	m->s_num_install++;
+	m->entries[i].secondary = (m->entries[i].count/58);
+	m->entries[i].count += 2*(m->entries[i].secondary);
 	break;
       }
     }
@@ -85,6 +92,8 @@ Flag  mgries_access(MGries *m, Addr rowAddr){
 	  m->entries[j].count++;
 	  miss_spill_match = TRUE;
 	  m->s_num_install++;
+	  m->entries[j].secondary = (m->entries[j].count/58);
+	  m->entries[j].count += 2*(m->entries[j].secondary);
 	  break;
         }
       }
@@ -107,6 +116,10 @@ Flag  mgries_access(MGries *m, Addr rowAddr){
 
   if(retval==TRUE){
     m->s_mitigations++;
+  }
+
+  if(m->s_mitigations > 2048) {
+    m->start_aqua = TRUE;
   }
   
   return retval;

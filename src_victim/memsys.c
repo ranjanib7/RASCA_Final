@@ -99,11 +99,14 @@ void memsys_print_stats(MemSys *m)
     printf("\n%s_AVG_DELAY       \t : %llu",    header, avg_delay);
     printf("\n%s_RH_TOT_MITIGATE \t : %llu",    header, m->s_tot_mitigate);
     printf("\n");
-    
+   
+    uns64 sum_total = 0; 
     if(m->mgries_t)
       for(uns i=0; i< m->mainmem->num_banks; i++){
 	mgries_print_stats(m->mgries_t[i]);
+	sum_total += m->mgries_t[i]->s_num_install;
       }
+    printf("\nMGRIES_NUM_INSTALL \t : %llu", sum_total);
 
     if(m->cra_t)
       cra_ctr_print_stats(m->cra_t);

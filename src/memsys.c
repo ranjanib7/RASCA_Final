@@ -55,13 +55,13 @@ MemSys *memsys_new(uns num_threads, uns64 rh_threshold){
     /* m->cra_t = cra_ctr_new(...);    */
 
     // AQUA
-    //int num_rows = 52182;  // assuming that A = rh/2 = 512 and time taken to move a quarantine row = 1 read + 1 write = 234 cycles
-    uns64 rqa_rows = 23053;
+    uns64 rqa_rows = 50890;
     m->rqa = rqa_new(rqa_rows, rh_threshold/2);
     uns64 fpt_rows = 2097152;
     m->fpt = ptrtables_new(fpt_rows);
-    uns64 rpt_rows = 23053;
+    uns64 rpt_rows = 50890;
     m->rpt = ptrtables_new(rpt_rows);
+
     return m;
 }
 
@@ -108,10 +108,13 @@ void memsys_print_stats(MemSys *m)
     printf("\n%s_RH_TOT_MITIGATE \t : %llu",    header, m->s_tot_mitigate);
     printf("\n");
     
+    uns64 sum_install = 0;
     if(m->mgries_t)
       for(uns i=0; i< m->mainmem->num_banks; i++){
 	mgries_print_stats(m->mgries_t[i]);
+	sum_install+=m->mgries_t[i]->s_num_install;
       }
+    printf("\n%s_*_NUM_INSTALL \t : %llu",	header, sum_install);
 
     if(m->cra_t)
       cra_ctr_print_stats(m->cra_t);
@@ -130,28 +133,40 @@ uns64  memsys_dram_access(MemSys *m, Addr lineaddr, uns64 in_cycle, ACTinfo *act
   double burst_size=1.0; // one cache line
   uns64 delay=0;
 
-  if((in_cycle - m->rqa->last_reset)/4000000 >= 64) {
-    m->rqa->last_reset = in_cycle;
-    rqa_reset(m->rqa);
-  }
+  // parse address bits and get my bank
+  uns64 mybankid, myrowbufid, mychannelid;
+  dram_parseaddr(m->mainmem, lineaddr, &myrowbufid,&mybankid,&mychannelid);
 
-  delay += rqa_check_delay();
-  Flag outcome = mgries_access(m->mgries_t[act_info->bankID], lineaddr/(m->mainmem->lines_in_rowbuf));
-  if(outcome == TRUE) {
-    delay += rqa_migrate(m->rqa, lineaddr/(m->mainmem->lines_in_rowbuf), m->fpt, m->rpt);
-  }
-  else {
-    delay += dram_service(m->mainmem, lineaddr/(m->mainmem->lines_in_rowbuf), type, burst_size, in_cycle, act_info);
-    rqa_drain_row(m->rqa, m->rpt, m->fpt);
-  }
+  if(m->mgries_t[mybankid]->start_aqua == FALSE) {
+    delay += dram_service(m->mainmem, lineaddr, type, burst_size, in_cycle, act_info);
 
-  /*if(act_info != NULL && act_info->isACT) {
-    Flag outcome = mgries_access(m->mgries_t[act_info->bankID], lineaddr/(m->mainmem->lines_in_rowbuf));
-    if(outcome == TRUE) {
-      memsys_rh_mitigate(m, lineaddr/(m->mainmem->lines_in_rowbuf), in_cycle);
+    if(act_info != NULL && act_info->isACT) {
+      Flag outcome = mgries_access(m->mgries_t[act_info->bankID], lineaddr/(m->mainmem->lines_in_rowbuf));
+      if(outcome == TRUE) {
+        memsys_rh_mitigate(m, lineaddr/(m->mainmem->lines_in_rowbuf), in_cycle);
+      }
     }
-  }*/
+  }
 
+  else {
+    if((in_cycle - m->rqa->last_reset)/4000000 >= 64) {
+      m->rqa->last_reset = in_cycle;
+      rqa_reset(m->rqa);
+    }
+    delay += rqa_check_delay();
+    m->rqa->s_num_accesses++;
+
+    Flag outcome = mgries_access(m->mgries_t[mybankid], lineaddr/(m->mainmem->lines_in_rowbuf));
+
+    if(outcome == TRUE) {
+      delay += rqa_migrate(m->rqa, lineaddr/(m->mainmem->lines_in_rowbuf), m->fpt, m->rpt);
+    }
+    else {
+      delay += dram_service(m->mainmem, lineaddr, type, burst_size, in_cycle, act_info);
+      rqa_drain_row(m->rqa, m->rpt, m->fpt);
+    }
+
+  }
 
   return delay;
 }

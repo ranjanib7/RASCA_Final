@@ -62,15 +62,20 @@ uns64 rqa_migrate(Rqa *rqa, Addr addr, PtrTable *fpt, PtrTable *rpt) {
   fpt->entries[addr].valid = TRUE;
   fpt->entries[addr].addr = rqa->next_free_qr;
 
-  delay += 10;
+  // Update delay for entering this in the FPT
+  delay += 135;  // SInce this delay is given as 45ns for a 3GHz clock, which is 135 cycles
 
   if(rpt->entries[rqa->next_free_qr].valid) {
     Addr removed_row = rpt->entries[rqa->next_free_qr].addr;
     rqa_remove_row(rqa->next_free_qr, rpt, fpt);
+    if(origRowQuarantine && (addr/32) != (removed_row/32)) {
+      delay += 135;
+    }
   }
 
   rpt->entries[rqa->next_free_qr].valid = TRUE;
   rpt->entries[rqa->next_free_qr].addr = addr;
+  delay += 135; // RPT mapping update delay
 
   if(origRowQuarantine) {
     rpt->entries[new_row].valid = FALSE;
@@ -86,9 +91,10 @@ uns64 rqa_migrate(Rqa *rqa, Addr addr, PtrTable *fpt, PtrTable *rpt) {
 }
 
 void rqa_print_stats(Rqa *rqa) {
-  printf("RQA");
-  printf("\n NUM ACCESS \t : %llu", rqa->s_num_accesses);
-  printf("\n NUM MIGRATIONS \t : %llu", rqa->s_num_migrations);
-  printf("\n NUM DRAINS \t : %llu", rqa->s_num_drains);
+  printf("\nRQA");
+  printf("\nNUM ACCESS \t : %llu", rqa->s_num_accesses);
+  printf("\nNUM MIGRATIONS \t : %llu", rqa->s_num_migrations);
+  printf("\nNUM DRAINS \t : %llu", rqa->s_num_drains);
+  printf("\n");
 }
 
